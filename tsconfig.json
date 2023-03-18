@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		//		"noEmit": true,
+		//		"outDir": "dist",
+		//		"declaration": true,
+		//		"emitDeclarationOnly": true,
+		//		"sourceMap": false,
+		//		"isolatedModules": true,
+	},
+}
