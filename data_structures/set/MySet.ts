@@ -8,21 +8,11 @@ export class MySet<T> implements IMySet<T> {
   // use object without prototype to avoid key collisions
   private items: Record<string | number, T> = Object.create(null)
 
+  // a.k.a. hash function
   private readonly keyExtractor?: (value: T) => string | number
 
   constructor(keyExtractor?: (value: T) => string | number) {
-    this.keyExtractor = keyExtractor
-  }
-
-  private toKey(value: T) {
-    if (this.keyExtractor !== undefined) {
-      return this.keyExtractor(value)
-    } else if (typeof value === 'string' || typeof value === 'number') {
-      // use the value as a key if keyExtractor is not provided - good for strings & numbers
-      return value
-    } else {
-      throw new Error(`Cannot use MySet with value ${value} if keyExtractor is not provided'`)
-    }
+    this.keyExtractor = keyExtractor ?? JSON.stringify
   }
 
   get size() {
@@ -31,45 +21,23 @@ export class MySet<T> implements IMySet<T> {
   }
 
   has(value: T) {
-    const key = this.toKey(value)
+    const key = this.keyExtractor(value)
     return (key in this.items)
   }
 
   add(...values: T[]) {
     values.forEach(value => {
-      const key = this.toKey(value)
+      const key = this.keyExtractor(value)
       this.items[key] = value
     })
   }
 
-  clear() {
-    this.items = Object.create(null)
+  remove(value: T) {
+    const key = this.keyExtractor(value)
+    delete this.items[key]
   }
 
-  delete(value: T) {
-    const key = this.toKey(value)
-    if (key in this.items) {
-      delete this.items[key]
-      return true
-    } else {
-      return false
-    }
-  }
-
-  values() {
+  get values() {
     return Object.values(this.items)
-  }
-
-  /** An alias of {@link values} */
-  keys() {
-    return this.values()
-  }
-
-  entries() {
-    return this.values().map(value => [value, value] as [T, T])
-  }
-
-  forEach(cb) {
-    this.values().forEach(cb)
   }
 }

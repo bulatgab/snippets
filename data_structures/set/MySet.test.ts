@@ -1,49 +1,49 @@
 import {MySet} from './MySet'
 
 it('should work with numbers and strings', () => {
-  const set = new MySet<number>()
-  set.add(1, 2, 1, 1, 3, 4)
-  expect(set.size).toBe(4)
-  expect(set.keys()).toEqual([1, 2, 3, 4])
+  const mySet = new MySet<number>()
+  expect(mySet.size).toBe(0)
+  expect(mySet.values).toEqual([])
+
+  mySet.add(1, 2, 1, 1)
+  expect(mySet.has(1)).toBe(true)
+  expect(mySet.has(2)).toBe(true)
+  expect(mySet.has(100)).toBe(false)
+  expect(mySet.size).toBe(2)
+  expect(mySet.values).toEqual([1, 2])
+
+  mySet.remove(1)
+  expect(mySet.has(1)).toBe(false)
+  expect(mySet.size).toBe(1)
+  expect(mySet.values).toEqual([2])
 })
 
 it('should work with objects', () => {
-  type ObjectWithId = {
+  type Item = {
     id: string | number,
     [key: string]: unknown,
   }
 
-  const myObjects: ObjectWithId[] = [
+  const items: Item[] = [
     {id: 0, someData: 'AAA'},
-    {id: 1, someData: 'BBB'},
+    {id: 2, someData: 'CCC'},
+    {id: 2, someData: 'CCC'},
     {id: 2, someData: 'CCC'},
   ]
 
-  const set = new MySet<ObjectWithId>(obj => obj.id)
-  set.add(myObjects[0])
-  set.add(myObjects[1], myObjects[2])
+  const mySet = new MySet<Item>(obj => obj.id)
+  mySet.add(...items)
 
-  // size, keys, values, entries
-  expect(set.size).toBe(3)
-  expect(set.keys()).toEqual(myObjects)
-  expect(set.values()).toEqual(myObjects)
-  expect(set.entries()).toEqual(myObjects.map(obj => [obj, obj]))
+  expect(mySet.has(items[0])).toBe(true)
+  expect(mySet.has(items[2])).toBe(true)
+  expect(mySet.has({id: 100})).toBe(false)
+  expect(mySet.size).toBe(2)
+  expect(mySet.values).toEqual([items[0], items[1]])
 
-  // forEach
-  let sum = 0
-  set.forEach(obj => {
-    sum += obj.id
-  })
-  expect(sum).toBe(3)
-
-  // has, delete
-  expect(set.has(myObjects[0])).toBe(true)
-  set.delete(myObjects[0])
-  expect(set.has(myObjects[0])).toBe(false)
-
-  // clear
-  set.clear()
-  expect(set.size).toBe(0)
+  mySet.remove(items[0])
+  expect(mySet.has(items[0])).toBe(false)
+  expect(mySet.size).toBe(1)
+  expect(mySet.values).toEqual([items[1]])
 })
 
 
