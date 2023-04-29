@@ -1,8 +1,8 @@
 export interface IMyStack<T> {
   /**
-   * Returns undefined if the stack is empty
+   * Returns null if the stack is empty
    */
-  pop: () => T | undefined,
+  pop: () => T | null,
 
   push: (value: T) => void,
 }

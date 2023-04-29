@@ -4,7 +4,7 @@ import {IMySet} from './IMySet'
  * IMySet implementation that uses JS object for storing key-value pairs.
  * For types other than string & number, we need to provide 'keyExtractor' callback in the constructor.
  */
-export class MySet<T> implements IMySet<T> {
+export class MySet<T> implements IMySet<T>, Iterable<T> {
   // use object without prototype to avoid key collisions
   private items: Record<string | number, T> = Object.create(null)
 
@@ -39,5 +39,23 @@ export class MySet<T> implements IMySet<T> {
 
   get values() {
     return Object.values(this.items)
+  }
+
+  [Symbol.iterator](): Iterator<T> {
+    const values = this.values
+    let i = 0
+
+    // noinspection UnnecessaryLocalVariableJS
+    const iterator: Iterator<T> = {
+      next(): IteratorResult<T> {
+        if (i < values.length) {
+          return {done: false, value: values[i++]}
+        } else {
+          return {done: true, value: null}
+        }
+      }
+    }
+
+    return iterator
   }
 }
